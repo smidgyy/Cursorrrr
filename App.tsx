@@ -333,7 +333,7 @@ export default function App() {
                 className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 flex items-center justify-center transition-all hover:scale-105 active:scale-95 group overflow-hidden"
                 title="View on Pump.fun"
             >
-                 <div className="relative w-5 h-5 transform rotate-45">
+                 <div className="relative w-3 h-5 transform rotate-45">
                      <div className="absolute top-0 left-0 right-0 h-[60%] bg-green-500 rounded-t-full"></div>
                      <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-white rounded-b-full"></div>
                 </div>
