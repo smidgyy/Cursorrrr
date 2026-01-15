@@ -31,5 +31,4 @@ export interface GameState {
 export interface Player {
   username: string;
   score: number;
-  rank?: number;
 }

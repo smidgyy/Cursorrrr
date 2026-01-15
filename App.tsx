@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BigCursor } from './components/BigCursor';
 import { INITIAL_UPGRADES, getIcon } from './constants';
-import { Upgrade, FloatingText, Player } from './types';
-import { Coins, Zap, Activity, TrendingUp, MousePointer2, Save, Trophy, Volume2, VolumeX } from 'lucide-react';
+import { Upgrade, FloatingText } from './types';
+import { Coins, Zap, Activity, TrendingUp, MousePointer2, Save, Volume2, VolumeX } from 'lucide-react';
 import { UsernameModal } from './components/UsernameModal';
-import { Leaderboard } from './components/Leaderboard';
 import { playClickSound, playUpgradeSound, playUiSound, playErrorSound } from './utils/audio';
 
 const STORAGE_KEY = 'the_cursor_save_v2'; 
@@ -53,12 +52,6 @@ export default function App() {
   // Settings
   const [isMuted, setIsMuted] = useState<boolean>(savedState?.isMuted ?? false);
   
-  // Leaderboard State
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
-  const [leaderboardData, setLeaderboardData] = useState<Player[]>([]);
-  const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(false);
-  const [isServerOffline, setIsServerOffline] = useState(false);
-
   // Refs for access inside intervals
   const balanceRef = useRef(balance);
   const totalClicksRef = useRef(totalClicks);
@@ -136,35 +129,9 @@ export default function App() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: user, score: clicks })
         });
-        setIsServerOffline(false);
     } catch (e) {
-        // Silent fail for sync, but mark offline for UI
-        setIsServerOffline(true);
+        // Silent fail for sync
     }
-  };
-
-  const fetchLeaderboard = async () => {
-    setIsLeaderboardLoading(true);
-    try {
-        const res = await fetch(`${API_URL}/leaderboard`);
-        if (!res.ok) throw new Error("Server error");
-        const data = await res.json();
-        setLeaderboardData(data);
-        setIsServerOffline(false);
-    } catch (e) {
-        console.warn("Leaderboard fetch failed. Is server running?");
-        setIsServerOffline(true);
-        setLeaderboardData([]);
-    } finally {
-        setIsLeaderboardLoading(false);
-    }
-  };
-
-  // Open Leaderboard Handler
-  const handleOpenLeaderboard = () => {
-    if (!isMuted) playUiSound();
-    setShowLeaderboard(true);
-    fetchLeaderboard();
   };
 
   // --- Game Loop (Passive Income) ---
@@ -294,8 +261,6 @@ export default function App() {
     }));
   };
 
-  const marketCap = (balance * 0.00042).toFixed(2);
-
   // --- Render ---
 
   if (!username) {
@@ -313,16 +278,6 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#050505] text-white overflow-hidden font-inter selection:bg-green-500 selection:text-black flex flex-col">
       
-      {/* Leaderboard Modal */}
-      <Leaderboard 
-        isOpen={showLeaderboard} 
-        onClose={() => setShowLeaderboard(false)}
-        players={leaderboardData}
-        currentPlayer={username}
-        isLoading={isLeaderboardLoading}
-        isOffline={isServerOffline}
-      />
-
       {/* --- Background --- */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-green-500/10 blur-[120px] rounded-full mix-blend-screen"></div>
@@ -351,24 +306,38 @@ export default function App() {
         <div className="flex gap-4">
             <button
                 onClick={() => setIsMuted(!isMuted)}
-                className="p-2 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 text-gray-400 hover:text-white transition-colors"
+                className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
                 title={isMuted ? "Unmute" : "Mute"}
             >
                 {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
             </button>
-
-            <button 
-                onClick={handleOpenLeaderboard}
-                className="flex items-center gap-2 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 border border-yellow-500/20 px-4 py-2 rounded-full transition-all text-xs font-bold uppercase tracking-wider"
-            >
-                <Trophy size={14} />
-                Leaderboard
-            </button>
             
-            <div className="hidden md:flex items-center gap-4 bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/5">
-                <span className="text-xs text-gray-400 uppercase tracking-wider font-bold">Mkt Cap</span>
-                <span className="font-mono text-green-400 font-bold">${marketCap}k</span>
-            </div>
+            {/* X (Twitter) Community Link */}
+            <a 
+                href="https://x.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 flex items-center justify-center transition-all hover:scale-105 active:scale-95 group"
+                title="Join X Community"
+            >
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white group-hover:fill-gray-200" aria-hidden="true">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+            </a>
+
+            {/* Pump.fun Link */}
+            <a 
+                href="https://pump.fun" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 flex items-center justify-center transition-all hover:scale-105 active:scale-95 group overflow-hidden"
+                title="View on Pump.fun"
+            >
+                 <div className="relative w-5 h-5 transform rotate-45">
+                     <div className="absolute top-0 left-0 right-0 h-[60%] bg-green-500 rounded-t-full"></div>
+                     <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-white rounded-b-full"></div>
+                </div>
+            </a>
         </div>
       </header>
 
