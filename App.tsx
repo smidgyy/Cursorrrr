@@ -327,7 +327,7 @@ export default function App() {
 
             {/* Pump.fun Link */}
             <a 
-                href="https://pump.fun" 
+                href="https://pump.fun/coin/2wC658QPsHGhherS4xfJYff8gwE54WSk2r9UUGkepump" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 flex items-center justify-center transition-all hover:scale-105 active:scale-95 group overflow-hidden"
