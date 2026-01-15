@@ -353,8 +353,8 @@ export default function App() {
                     CURSOR
                 </div>
                 <h2 className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em] mb-2">Current Balance</h2>
-                <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-7xl lg:text-8xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-lg break-all">
+                <div className="flex items-center justify-center gap-2">
+                    <span className="text-7xl lg:text-8xl font-sans font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-lg break-all">
                         {Math.floor(balance).toLocaleString()}
                     </span>
                 </div>
